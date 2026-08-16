@@ -47,6 +47,10 @@ RUN bundle install && \
 # Copy application code
 COPY . .
 
+# Ensure the Rails bin scripts are executable in Linux containers.
+# This avoids the common permission issue when the repo is checked out from Windows/WSL.
+RUN chmod +x bin/*
+
 # Precompile bootsnap code for faster boot times.
 # -j 1 disable parallel compilation to avoid a QEMU bug: https://github.com/rails/bootsnap/issues/495
 RUN bundle exec bootsnap precompile -j 1 app/ lib/

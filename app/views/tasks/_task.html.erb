@@ -1,9 +1,11 @@
 <% updated_at_th = task.updated_at.in_time_zone("Bangkok") %>
 <% deadline_be = task.deadline_date&.strftime("%d/%m/#{task.deadline_date.year + 543}") %>
+<% deadline_state = task.deadline_state %>
+<% deadline_state_class = deadline_state.to_s.tr("_", "-") %>
 
 <article id="<%= dom_id(task) %>"
-         class="task-item <%= "task-item--completed" if task.completed? %>"
-         data-controller="task-edit"
+         class="task-item task-item--deadline-<%= deadline_state_class %> <%= "task-item--completed" if task.completed? %>"
+         data-controller="task-edit card-spotlight"
          data-task-filter-target="item"
          data-search-text="<%= task.title %>">
   <%= button_to task_path(task),
@@ -34,7 +36,7 @@
       </span>
 
       <% if deadline_be.present? %>
-        <span class="task-item__deadline">
+        <span class="task-item__deadline task-item__deadline--<%= deadline_state_class %>">
           <svg class="task-item__deadline-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
             <rect x="3" y="4.5" width="14" height="12.5" rx="2"/>
             <path d="M6 2.5V5M14 2.5V5M3 8H17"/>
@@ -50,7 +52,7 @@
   </div>
 
   <div class="task-item__actions" data-task-edit-target="summary">
-    <span class="task-item__status"><%= task.completed? ? "เสร็จแล้ว" : "รอดำเนินการ" %></span>
+    <span class="task-item__status task-item__status--<%= deadline_state_class %>"><%= task.status_label %></span>
 
     <button type="button"
             class="task-item__edit"

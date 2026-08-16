@@ -95,15 +95,56 @@ input {
 
 /* Task list — intentionally scoped so the rest of the page stays untouched. */
 .task-item {
+  --task-accent: #6366f1;
+  --card-pointer-x: 50%;
+  --card-pointer-y: 50%;
+  --card-glow-opacity: 0;
+  position: relative;
   display: grid;
   grid-template-columns: 24px minmax(0, 1fr) auto;
   align-items: start;
   gap: 14px;
   min-height: 98px;
   padding: 18px;
+  isolation: isolate;
+  overflow: hidden;
   border-bottom: 1px solid #e8edf3;
   background: #ffffff;
-  transition: background-color 160ms ease, box-shadow 160ms ease;
+  transition: background-color 180ms ease, box-shadow 180ms ease;
+}
+
+.task-item::before,
+.task-item::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: var(--card-glow-opacity);
+  transition: opacity 220ms ease;
+}
+
+.task-item::before {
+  background: radial-gradient(210px circle at var(--card-pointer-x) var(--card-pointer-y), rgba(99, 102, 241, 0.1), transparent 72%);
+}
+
+.task-item::after {
+  padding: 1px;
+  background: radial-gradient(145px circle at var(--card-pointer-x) var(--card-pointer-y), rgba(79, 70, 229, 0.62), transparent 74%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+}
+
+.task-item > * {
+  position: relative;
+  z-index: 1;
+}
+
+.task-item:focus-within::before,
+.task-item:focus-within::after {
+  opacity: 0.72;
 }
 
 .task-item:last-child {
@@ -111,12 +152,22 @@ input {
 }
 
 .task-item:hover {
-  position: relative;
   background: #fbfdfc;
-  box-shadow: inset 3px 0 0 #34d399;
+  box-shadow: inset 3px 0 0 var(--task-accent);
+}
+
+.task-item--deadline-due-soon {
+  --task-accent: #f59e0b;
+  background: linear-gradient(90deg, rgba(255, 251, 235, 0.72), #ffffff 38%);
+}
+
+.task-item--deadline-overdue {
+  --task-accent: #ef4444;
+  background: linear-gradient(90deg, rgba(254, 242, 242, 0.78), #ffffff 38%);
 }
 
 .task-item--completed {
+  --task-accent: #10b981;
   background: linear-gradient(90deg, rgba(236, 253, 245, 0.7), #ffffff 48%);
 }
 
@@ -218,10 +269,22 @@ input {
 
 .task-item__deadline {
   padding: 3px 7px;
-  border: 1px solid #fde7b0;
+  border: 1px solid #dbe4f0;
   border-radius: 7px;
+  background: #f8fafc;
+  color: #64748b;
+}
+
+.task-item__deadline--due-soon {
+  border-color: #fde7b0;
   background: #fffaf0;
   color: #b45309;
+}
+
+.task-item__deadline--overdue {
+  border-color: #fecaca;
+  background: #fef2f2;
+  color: #dc2626;
 }
 
 .task-item--completed .task-item__deadline {
@@ -257,14 +320,26 @@ input {
   align-items: center;
   min-height: 27px;
   padding: 5px 10px;
-  border: 1px solid #fde7a6;
+  border: 1px solid #dbe4f0;
   border-radius: 999px;
-  background: #fff7d6;
-  color: #a16207;
+  background: #f8fafc;
+  color: #64748b;
   font-size: 10.5px;
   font-weight: 600;
   line-height: 1;
   white-space: nowrap;
+}
+
+.task-item__status--due-soon {
+  border-color: #fde7a6;
+  background: #fff7d6;
+  color: #a16207;
+}
+
+.task-item__status--overdue {
+  border-color: #fecaca;
+  background: #fef2f2;
+  color: #dc2626;
 }
 
 .task-item--completed .task-item__status {
@@ -919,6 +994,15 @@ input {
   background: #6366f1;
 }
 
+.task-calendar__event--due-soon {
+  color: #a16207;
+  background: #fffbeb;
+}
+
+.task-calendar__event--due-soon .task-calendar__event-dot {
+  background: #f59e0b;
+}
+
 .task-calendar__event--overdue {
   color: #b91c1c;
   background: #fef2f2;
@@ -978,6 +1062,10 @@ input {
 
 .task-calendar__legend-dot--upcoming {
   background: #6366f1;
+}
+
+.task-calendar__legend-dot--due-soon {
+  background: #f59e0b;
 }
 
 .task-calendar__legend-dot--overdue {
@@ -1287,9 +1375,25 @@ html.dark .task-item {
   background: #0f1726;
 }
 
+html.dark .task-item::before {
+  background: radial-gradient(220px circle at var(--card-pointer-x) var(--card-pointer-y), rgba(129, 140, 248, 0.15), transparent 72%);
+}
+
+html.dark .task-item::after {
+  background: radial-gradient(150px circle at var(--card-pointer-x) var(--card-pointer-y), rgba(165, 180, 252, 0.72), transparent 74%);
+}
+
 html.dark .task-item:hover {
   background: #131d2e;
-  box-shadow: inset 3px 0 0 #34d399;
+  box-shadow: inset 3px 0 0 var(--task-accent);
+}
+
+html.dark .task-item--deadline-due-soon {
+  background: linear-gradient(90deg, rgba(120, 53, 15, 0.18), #0f1726 40%);
+}
+
+html.dark .task-item--deadline-overdue {
+  background: linear-gradient(90deg, rgba(127, 29, 29, 0.2), #0f1726 40%);
 }
 
 html.dark .task-item--completed {
@@ -1323,9 +1427,21 @@ html.dark .task-item__updated {
 }
 
 html.dark .task-item__deadline {
-  border-color: rgba(245, 158, 11, 0.23);
-  background: rgba(146, 64, 14, 0.13);
-  color: #f0a84b;
+  border-color: #314058;
+  background: rgba(30, 41, 59, 0.55);
+  color: #9aa9bd;
+}
+
+html.dark .task-item__deadline--due-soon {
+  border-color: rgba(245, 158, 11, 0.3);
+  background: rgba(146, 64, 14, 0.17);
+  color: #fbbf24;
+}
+
+html.dark .task-item__deadline--overdue {
+  border-color: rgba(248, 113, 113, 0.32);
+  background: rgba(127, 29, 29, 0.22);
+  color: #fca5a5;
 }
 
 html.dark .task-item--completed .task-item__deadline {
@@ -1335,9 +1451,21 @@ html.dark .task-item--completed .task-item__deadline {
 }
 
 html.dark .task-item__status {
-  border-color: rgba(245, 158, 11, 0.22);
+  border-color: #314058;
+  color: #9aa9bd;
+  background: rgba(30, 41, 59, 0.55);
+}
+
+html.dark .task-item__status--due-soon {
+  border-color: rgba(245, 158, 11, 0.3);
   color: #fcd34d;
   background: rgba(161, 98, 7, 0.2);
+}
+
+html.dark .task-item__status--overdue {
+  border-color: rgba(248, 113, 113, 0.32);
+  color: #fca5a5;
+  background: rgba(127, 29, 29, 0.24);
 }
 
 html.dark .task-item--completed .task-item__status {
@@ -1456,6 +1584,11 @@ html.dark .task-calendar__day--today .task-calendar__day-heading time {
 html.dark .task-calendar__event--upcoming {
   color: #c7d2fe;
   background: rgba(79, 70, 229, 0.2);
+}
+
+html.dark .task-calendar__event--due-soon {
+  color: #fcd34d;
+  background: rgba(161, 98, 7, 0.2);
 }
 
 html.dark .task-calendar__event--overdue {

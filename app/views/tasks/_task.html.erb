@@ -8,7 +8,11 @@
          data-search-text="<%= task.title %>">
   <%= button_to task_path(task),
         method: :patch,
-        params: { task: { completed: !task.completed? } },
+        params: {
+          task: { completed: !task.completed? },
+          view: @view_mode,
+          month: @calendar_month&.strftime("%Y-%m")
+        },
         class: "task-item__check #{'task-item__check--completed' if task.completed?}",
         form_class: "task-item__check-form",
         title: task.completed? ? "ทำเครื่องหมายว่ายังไม่เสร็จ" : "ทำเครื่องหมายว่าเสร็จแล้ว",
@@ -62,6 +66,10 @@
     <%= button_to "ลบ",
           task_path(task),
           method: :delete,
+          params: {
+            view: @view_mode,
+            month: @calendar_month&.strftime("%Y-%m")
+          },
           class: "task-item__delete",
           form_class: "task-item__delete-form",
           form: { data: { turbo_confirm: "ต้องการลบงานนี้หรือไม่?" } } %>

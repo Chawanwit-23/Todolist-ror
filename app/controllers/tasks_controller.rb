@@ -2,17 +2,18 @@ class TasksController < ApplicationController
   def index
     @tasks = Task.all
     @task = Task.new
-    prepare_calendar
+    prepare_task_view
   end
 
   def create
     @task = Task.new(task_params)
 
     if @task.save
-      respond_with_task_changes("เพิ่มงานสำเร็จ")
+      @created_task = @task
+      respond_with_task_changes("เพิ่มงานสำเร็จ", turbo_template: :create, reset_form: true)
     else
       @tasks = Task.all
-      prepare_calendar
+      prepare_task_view
       respond_to do |format|
         format.turbo_stream { render :form_errors, status: :unprocessable_content }
         format.html { render :index, status: :unprocessable_content }
@@ -29,13 +30,25 @@ class TasksController < ApplicationController
                 else
                   "แก้ไขงานสำเร็จ"
                 end
-      respond_with_task_changes(message)
+      respond_with_task_changes(
+        message,
+        turbo_template: :update,
+        load_tasks: @task.saved_change_to_completed?
+      )
     else
-      @tasks = Task.all
-      prepare_calendar
+      error_message = @task.errors.full_messages.to_sentence
+      @task.reload
+      prepare_view_context
       respond_to do |format|
-        format.turbo_stream { render :refresh, status: :unprocessable_content }
-        format.html { render :index, status: :unprocessable_content }
+        format.turbo_stream do
+          flash.now[:alert] = error_message
+          render :update_error, status: :unprocessable_content
+        end
+        format.html do
+          redirect_to tasks_path(view: @view_mode, month: @calendar_month.strftime("%Y-%m")),
+                      alert: error_message,
+                      status: :see_other
+        end
       end
     end
   end
@@ -44,7 +57,7 @@ class TasksController < ApplicationController
     @task = Task.find(params[:id])
     @task.destroy
 
-    respond_with_task_changes("ลบงานสำเร็จ", html_status: :see_other)
+    respond_with_task_changes("ลบงานสำเร็จ", turbo_template: :destroy, html_status: :see_other)
   end
 
   private
@@ -53,15 +66,15 @@ class TasksController < ApplicationController
     params.require(:task).permit(:title, :completed, :deadline_date)
   end
 
-  def respond_with_task_changes(message, html_status: :found)
-    @tasks = Task.all
-    @task = Task.new
-    prepare_calendar
+  def respond_with_task_changes(message, turbo_template:, html_status: :found, reset_form: false, load_tasks: true)
+    @tasks = Task.all if load_tasks
+    @task = Task.new if reset_form
+    load_tasks ? prepare_task_view : prepare_view_context
 
     respond_to do |format|
       format.turbo_stream do
         flash.now[:notice] = message
-        render :refresh
+        render turbo_template
       end
       format.html do
         redirect_to tasks_path(view: @view_mode, month: @calendar_month.strftime("%Y-%m")),
@@ -71,9 +84,19 @@ class TasksController < ApplicationController
     end
   end
 
-  def prepare_calendar
+  def prepare_task_view
+    prepare_view_context
+    return unless @view_mode == "calendar"
+
+    prepare_calendar
+  end
+
+  def prepare_view_context
     @view_mode = params[:view] == "calendar" ? "calendar" : "list"
     @calendar_month = parsed_calendar_month
+  end
+
+  def prepare_calendar
     calendar_start = @calendar_month.beginning_of_week(:monday)
     calendar_end = @calendar_month.end_of_month.end_of_week(:monday)
 

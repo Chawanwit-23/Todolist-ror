@@ -1414,10 +1414,16 @@ html.dark .task-calendar__event--completed {
   background: rgba(5, 150, 105, 0.17);
 }
 
-html.dark #flash-messages > div {
+html.dark .flash-message--notice {
   border-color: rgba(16, 185, 129, 0.28);
   background: rgba(6, 78, 59, 0.32);
   color: #a7f3d0;
+}
+
+html.dark .flash-message--alert {
+  border-color: rgba(248, 113, 113, 0.3);
+  background: rgba(127, 29, 29, 0.28);
+  color: #fecaca;
 }
 
 ::selection {

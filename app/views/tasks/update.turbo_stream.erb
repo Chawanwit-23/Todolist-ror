@@ -1,0 +1,6 @@
+<%= turbo_stream.update "flash-messages", partial: "tasks/flash" %>
+<%= turbo_stream.replace dom_id(@task), partial: "tasks/task", locals: { task: @task } %>
+
+<% if @task.saved_change_to_completed? %>
+  <%= turbo_stream.replace "task-summary", partial: "tasks/summary", locals: { tasks: @tasks } %>
+<% end %>

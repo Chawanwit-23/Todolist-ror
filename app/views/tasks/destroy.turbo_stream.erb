@@ -1,0 +1,12 @@
+<%= turbo_stream.update "flash-messages", partial: "tasks/flash" %>
+
+<% if @view_mode == "calendar" %>
+  <%= turbo_stream.update "task-calendar-container", partial: "tasks/calendar" %>
+<% elsif @tasks.any? %>
+  <%= turbo_stream.remove dom_id(@task) %>
+<% else %>
+  <%= turbo_stream.update "task-list-container", partial: "tasks/list", locals: { tasks: @tasks } %>
+<% end %>
+
+<%= turbo_stream.replace "task-summary", partial: "tasks/summary", locals: { tasks: @tasks } %>
+<%= turbo_stream.update "todo-count", @tasks.count %>

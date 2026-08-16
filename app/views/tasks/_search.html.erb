@@ -1,0 +1,27 @@
+<div class="task-search">
+  <svg class="task-search__icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
+    <circle cx="8.5" cy="8.5" r="5.5"/>
+    <path d="M12.5 12.5L17 17" stroke-linecap="round"/>
+  </svg>
+
+  <input type="search"
+         class="task-search__input"
+         placeholder="ค้นหางาน..."
+         autocomplete="off"
+         aria-label="ค้นหางาน"
+         data-task-filter-target="input"
+         data-action="input->task-filter#filter keydown->task-filter#clearOnEscape">
+
+  <span class="task-search__result" data-task-filter-target="result" aria-live="polite"></span>
+
+  <button type="button"
+          class="task-search__clear"
+          aria-label="ล้างการค้นหา"
+          data-task-filter-target="clear"
+          data-action="task-filter#clear"
+          hidden>
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+      <path d="M6 6L14 14M14 6L6 14" stroke-linecap="round"/>
+    </svg>
+  </button>
+</div>

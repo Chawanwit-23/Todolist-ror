@@ -1,0 +1,23 @@
+<nav class="task-view-switcher" aria-label="เลือกรูปแบบการแสดงงาน">
+  <%= link_to tasks_path(view: "list", month: @calendar_month.strftime("%Y-%m")),
+        class: "task-view-switcher__link #{'task-view-switcher__link--active' if @view_mode == 'list'}",
+        aria: { current: (@view_mode == "list" ? "page" : nil) } do %>
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+      <path d="M7 5H17M7 10H17M7 15H17" stroke-linecap="round"/>
+      <circle cx="3.5" cy="5" r="1" fill="currentColor" stroke="none"/>
+      <circle cx="3.5" cy="10" r="1" fill="currentColor" stroke="none"/>
+      <circle cx="3.5" cy="15" r="1" fill="currentColor" stroke="none"/>
+    </svg>
+    รายการ
+  <% end %>
+
+  <%= link_to tasks_path(view: "calendar", month: @calendar_month.strftime("%Y-%m")),
+        class: "task-view-switcher__link #{'task-view-switcher__link--active' if @view_mode == 'calendar'}",
+        aria: { current: (@view_mode == "calendar" ? "page" : nil) } do %>
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
+      <rect x="2.5" y="4" width="15" height="13.5" rx="2.5"/>
+      <path d="M6 2.5V5.5M14 2.5V5.5M2.5 8H17.5" stroke-linecap="round"/>
+    </svg>
+    ปฏิทิน
+  <% end %>
+</nav>

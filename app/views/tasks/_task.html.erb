@@ -1,0 +1,99 @@
+<% updated_at_th = task.updated_at.in_time_zone("Bangkok") %>
+<% deadline_be = task.deadline_date&.strftime("%d/%m/#{task.deadline_date.year + 543}") %>
+
+<article id="<%= dom_id(task) %>"
+         class="task-item <%= "task-item--completed" if task.completed? %>"
+         data-controller="task-edit"
+         data-task-filter-target="item"
+         data-search-text="<%= task.title %>">
+  <%= button_to task_path(task),
+        method: :patch,
+        params: { task: { completed: !task.completed? } },
+        class: "task-item__check #{'task-item__check--completed' if task.completed?}",
+        form_class: "task-item__check-form",
+        title: task.completed? ? "ทำเครื่องหมายว่ายังไม่เสร็จ" : "ทำเครื่องหมายว่าเสร็จแล้ว",
+        aria: { label: task.completed? ? "ทำเครื่องหมายว่ายังไม่เสร็จ" : "ทำเครื่องหมายว่าเสร็จแล้ว" } do %>
+    <% if task.completed? %>
+      <svg viewBox="0 0 16 16" aria-hidden="true" fill="none">
+        <path d="M3 8.2L6.2 11.4L13 4.6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    <% end %>
+  <% end %>
+
+  <div class="task-item__content" data-task-edit-target="summary">
+    <p class="task-item__title"><%= task.title %></p>
+
+    <div class="task-item__meta">
+      <span class="task-item__state">
+        <span class="task-item__state-dot" aria-hidden="true"></span>
+        <%= task.completed? ? "เสร็จแล้ว" : "ยังไม่เสร็จ" %>
+      </span>
+
+      <% if deadline_be.present? %>
+        <span class="task-item__deadline">
+          <svg class="task-item__deadline-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
+            <rect x="3" y="4.5" width="14" height="12.5" rx="2"/>
+            <path d="M6 2.5V5M14 2.5V5M3 8H17"/>
+          </svg>
+          กำหนดส่ง <%= deadline_be %>
+        </span>
+      <% end %>
+    </div>
+
+    <time class="task-item__updated" datetime="<%= updated_at_th.iso8601 %>">
+      อัปเดต <%= updated_at_th.strftime("%d/%m/#{updated_at_th.year + 543} · %H:%M น.") %>
+    </time>
+  </div>
+
+  <div class="task-item__actions" data-task-edit-target="summary">
+    <span class="task-item__status"><%= task.completed? ? "เสร็จแล้ว" : "รอดำเนินการ" %></span>
+
+    <button type="button"
+            class="task-item__edit"
+            data-action="task-edit#open"
+            aria-label="แก้ไขงาน <%= task.title %>">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
+        <path d="M4 13.5V16H6.5L15.3 7.2L12.8 4.7L4 13.5Z" stroke-linejoin="round"/>
+        <path d="M11.8 5.7L14.3 8.2"/>
+      </svg>
+      แก้ไข
+    </button>
+
+    <%= button_to "ลบ",
+          task_path(task),
+          method: :delete,
+          class: "task-item__delete",
+          form_class: "task-item__delete-form",
+          form: { data: { turbo_confirm: "ต้องการลบงานนี้หรือไม่?" } } %>
+  </div>
+
+  <div class="task-item__edit-panel"
+       data-task-edit-target="panel"
+       data-action="keydown->task-edit#closeOnEscape"
+       hidden>
+    <%= form_with model: task, class: "task-item__edit-form" do |form| %>
+      <%= hidden_field_tag :view, @view_mode %>
+      <%= hidden_field_tag :month, @calendar_month&.strftime("%Y-%m") %>
+
+      <div class="task-item__edit-fields">
+        <label class="task-item__edit-field task-item__edit-field--title">
+          <span>ชื่องาน</span>
+          <%= form.text_field :title,
+                required: true,
+                autocomplete: "off",
+                data: { task_edit_target: "title" } %>
+        </label>
+
+        <label class="task-item__edit-field task-item__edit-field--date">
+          <span>กำหนดส่ง</span>
+          <%= form.date_field :deadline_date %>
+        </label>
+      </div>
+
+      <div class="task-item__edit-actions">
+        <button type="button" class="task-item__cancel" data-action="task-edit#close">ยกเลิก</button>
+        <%= form.submit "บันทึก", class: "task-item__save" %>
+      </div>
+    <% end %>
+  </div>
+</article>

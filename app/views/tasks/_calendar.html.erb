@@ -1,0 +1,86 @@
+<% previous_month = @calendar_month.prev_month %>
+<% next_month = @calendar_month.next_month %>
+<% today = Date.current %>
+<% weekday_names = %w[จ. อ. พ. พฤ. ศ. ส. อา.] %>
+
+<section class="task-calendar" aria-label="ปฏิทินกำหนดส่งงานประจำเดือน <%= thai_month_and_year(@calendar_month) %>">
+  <header class="task-calendar__header">
+    <div>
+      <p class="task-calendar__eyebrow">กำหนดการประจำเดือน</p>
+      <h3 class="task-calendar__title"><%= thai_month_and_year(@calendar_month) %></h3>
+    </div>
+
+    <nav class="task-calendar__navigation" aria-label="เปลี่ยนเดือน">
+      <% unless @calendar_month == today.beginning_of_month %>
+        <%= link_to "วันนี้", tasks_path(view: "calendar", month: today.strftime("%Y-%m")), class: "task-calendar__today-link" %>
+      <% end %>
+
+      <%= link_to tasks_path(view: "calendar", month: previous_month.strftime("%Y-%m")),
+            class: "task-calendar__nav-button",
+            aria: { label: "เดือนก่อนหน้า" } do %>
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M12.5 4.5L7 10L12.5 15.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      <% end %>
+
+      <%= link_to tasks_path(view: "calendar", month: next_month.strftime("%Y-%m")),
+            class: "task-calendar__nav-button",
+            aria: { label: "เดือนถัดไป" } do %>
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M7.5 4.5L13 10L7.5 15.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      <% end %>
+    </nav>
+  </header>
+
+  <div class="task-calendar__scroll">
+    <div class="task-calendar__canvas">
+      <div class="task-calendar__weekdays" aria-hidden="true">
+        <% weekday_names.each do |weekday| %>
+          <span><%= weekday %></span>
+        <% end %>
+      </div>
+
+      <div class="task-calendar__grid">
+        <% @calendar_days.each do |date| %>
+          <% day_tasks = @tasks_by_deadline.fetch(date, []) %>
+          <% day_classes = ["task-calendar__day"] %>
+          <% day_classes << "task-calendar__day--outside" unless date.month == @calendar_month.month %>
+          <% day_classes << "task-calendar__day--today" if date == today %>
+
+          <div class="<%= day_classes.join(' ') %>" data-date="<%= date.iso8601 %>">
+            <div class="task-calendar__day-heading">
+              <time datetime="<%= date.iso8601 %>"><%= date.day %></time>
+              <% if date == today %><span>วันนี้</span><% end %>
+            </div>
+
+            <div class="task-calendar__events">
+              <% day_tasks.first(2).each do |task| %>
+                <div class="task-calendar__event <%= calendar_event_class(task, date) %>" title="<%= task.title %>">
+                  <span class="task-calendar__event-dot" aria-hidden="true"></span>
+                  <span><%= task.title %></span>
+                </div>
+              <% end %>
+
+              <% if day_tasks.size > 2 %>
+                <span class="task-calendar__more">+<%= day_tasks.size - 2 %> งาน</span>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <footer class="task-calendar__footer">
+    <div class="task-calendar__legend" aria-label="คำอธิบายสี">
+      <span><i class="task-calendar__legend-dot task-calendar__legend-dot--upcoming"></i>กำลังจะถึง</span>
+      <span><i class="task-calendar__legend-dot task-calendar__legend-dot--overdue"></i>เลยกำหนด</span>
+      <span><i class="task-calendar__legend-dot task-calendar__legend-dot--completed"></i>เสร็จแล้ว</span>
+    </div>
+
+    <% if @unscheduled_count.positive? %>
+      <span class="task-calendar__unscheduled"><%= @unscheduled_count %> งานยังไม่กำหนดวัน</span>
+    <% end %>
+  </footer>
+</section>

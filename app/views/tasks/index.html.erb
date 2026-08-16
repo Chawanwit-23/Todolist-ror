@@ -1,0 +1,72 @@
+<main class="min-h-screen px-4 py-20 sm:px-6">
+  <section class="mx-auto max-w-xl">
+    <header class="app-header mb-8">
+      <p class="app-kicker mb-3 flex items-center gap-3 font-mono text-[11px] font-medium uppercase tracking-[0.22em] text-indigo-600 before:h-px before:w-5 before:bg-indigo-600">MY TODO LIST</p>
+      <div class="flex items-start justify-between gap-4">
+        <div>
+          <h1 class="app-title m-0 text-4xl font-extrabold tracking-[-0.035em] text-slate-900 sm:text-[42px]">Todo List</h1>
+          <p class="app-subtitle mt-2 m-0 text-[15px] text-slate-500">keep track of your daily tasks</p>
+        </div>
+
+        <div class="app-header__actions">
+          <button type="button"
+                  class="theme-toggle"
+                  data-theme-target="toggle"
+                  data-action="theme#toggle"
+                  aria-label="เปลี่ยนโหมดสี">
+            <svg class="theme-toggle__sun" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
+              <circle cx="10" cy="10" r="3.25"/>
+              <path d="M10 2V4M10 16V18M2 10H4M16 10H18M4.35 4.35L5.75 5.75M14.25 14.25L15.65 15.65M15.65 4.35L14.25 5.75M5.75 14.25L4.35 15.65" stroke-linecap="round"/>
+            </svg>
+            <svg class="theme-toggle__moon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
+              <path d="M16.2 12.8A7 7 0 017.2 3.8a7 7 0 109 9z" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+
+          <span id="todo-count" class="task-total shrink-0 min-w-[44px] rounded-xl border border-slate-200 bg-white px-3 py-2 text-center font-mono text-[15px] font-medium text-slate-900 shadow-sm"><%= @tasks.count %></span>
+        </div>
+      </div>
+    </header>
+
+    <div id="flash-messages">
+      <%= render "flash" %>
+    </div>
+
+    <%= render "form", task: @task %>
+
+    <% if @view_mode == "calendar" %>
+      <div class="task-view-toolbar">
+        <%= render "summary", tasks: @tasks %>
+        <%= render "view_switcher" %>
+      </div>
+
+      <div id="task-calendar-container">
+        <%= render "calendar" %>
+      </div>
+    <% else %>
+      <div data-controller="task-filter">
+        <div class="task-view-toolbar task-view-toolbar--search">
+          <%= render "search" %>
+          <%= render "view_switcher" %>
+        </div>
+
+        <%= render "summary", tasks: @tasks %>
+
+        <div id="task-list-container">
+          <%= render "list", tasks: @tasks %>
+        </div>
+
+        <div class="task-search-empty" data-task-filter-target="empty" hidden>
+          <span class="task-search-empty__icon">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
+              <circle cx="8.5" cy="8.5" r="5.5"/>
+              <path d="M12.5 12.5L17 17" stroke-linecap="round"/>
+            </svg>
+          </span>
+          <strong>ไม่พบงานที่ค้นหา</strong>
+          <span>ลองใช้คำค้นอื่น หรือล้างช่องค้นหา</span>
+        </div>
+      </div>
+    <% end %>
+  </section>
+</main>

@@ -1,0 +1,40 @@
+<div id="task-form">
+  <% if task.errors.any? %>
+    <div class="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+      <% task.errors.full_messages.each do |message| %>
+        <p class="m-0"><%= message %></p>
+      <% end %>
+    </div>
+  <% end %>
+
+  <%= form_with model: task, class: "task-create-form mb-10 rounded-2xl border border-slate-200 bg-white/90 p-3 shadow-[0_18px_45px_rgba(15,23,42,0.08)] backdrop-blur-sm transition focus-within:border-emerald-400 focus-within:shadow-[0_0_0_4px_rgba(16,185,129,0.12)] #{task.errors.any? ? 'border-red-300 ring-2 ring-red-100' : ''}" do |form| %>
+    <%= hidden_field_tag :view, @view_mode %>
+    <%= hidden_field_tag :month, @calendar_month&.strftime("%Y-%m") %>
+
+    <div class="flex flex-col gap-3 md:flex-row md:items-center">
+      <%= form.text_field :title,
+            placeholder: "วันนี้ต้องทำอะไร?",
+            class: "task-create-form__input w-full min-w-0 flex-1 rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-3 text-[15px] font-medium text-slate-900 placeholder:text-slate-400 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-100",
+            autocomplete: "off",
+            required: true,
+            pattern: ".*\\S.*",
+            title: "พิมพ์ชื่องานก่อนกดเพิ่ม" %>
+
+      <div class="relative md:w-[210px]">
+        <%= form.date_field :deadline_date,
+              class: "deadline-date-field w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-3 pr-10 text-[14px] font-medium text-slate-700 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-100",
+              min: Date.current.to_s,
+              aria: { label: "เลือกวันที่ต้องการกำหนดเสร็จ" } %>
+
+        <span class="pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-400">
+          <svg viewBox="0 0 20 20" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
+            <rect x="3" y="4.5" width="14" height="12.5" rx="2.5"/>
+            <path d="M6 2.5V5M14 2.5V5M3 8H17"/>
+          </svg>
+        </span>
+      </div>
+
+      <%= form.submit "เพิ่มงาน", class: "rounded-xl bg-gradient-to-r from-emerald-500 to-green-500 px-4 py-3 text-sm font-semibold text-white shadow-[0_12px_24px_rgba(16,185,129,0.28)] transition hover:from-emerald-600 hover:to-green-600 focus:outline-none focus:ring-2 focus:ring-emerald-200 focus:ring-offset-2" %>
+    </div>
+  <% end %>
+</div>

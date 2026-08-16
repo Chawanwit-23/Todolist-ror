@@ -1,0 +1,10 @@
+<% if tasks.any? %>
+  <div class="task-list overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+    <%= render tasks %>
+  </div>
+<% else %>
+  <div class="task-list-empty rounded-2xl border border-dashed border-slate-200 bg-white px-5 py-14 text-center text-slate-500">
+    <h3 class="mb-1 text-base font-semibold text-slate-800">ยังไม่มีงาน</h3>
+    <p class="m-0 text-sm">เพิ่มงานแรกของคุณจากช่องด้านบน</p>
+  </div>
+<% end %>

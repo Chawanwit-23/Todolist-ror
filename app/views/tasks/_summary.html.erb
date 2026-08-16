@@ -1,0 +1,7 @@
+<div id="task-summary" class="mb-3 flex items-baseline justify-between px-1">
+  <h2 class="m-0 text-[12px] font-semibold uppercase tracking-[0.08em] text-slate-500">รายการงาน</h2>
+  <div class="flex items-center gap-3 text-[12px] text-slate-500">
+    <span class="inline-flex items-center gap-1.5"><strong class="font-semibold text-slate-800"><%= tasks.count(&:completed?) %></strong> เสร็จแล้ว</span>
+    <span class="inline-flex items-center gap-1.5"><strong class="font-semibold text-slate-800"><%= tasks.count { |task| !task.completed? } %></strong> รอดำเนินการ</span>
+  </div>
+</div>

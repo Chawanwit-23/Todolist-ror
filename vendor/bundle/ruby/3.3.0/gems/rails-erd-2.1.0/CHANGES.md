@@ -1,0 +1,335 @@
+2.1.0
+-----
+
+### New Features
+* Add `cluster: true` support for Mermaid `classDiagram` output, grouping entities by Ruby namespace into Mermaid `namespace { }` blocks (#479, #480)
+* Add glob and regex pattern support for `exclude` and `only` options, allowing entire namespaces to be filtered with patterns like `"SolidQueue::*"` or `"/^Active/"` (#465, #478)
+* Add tbls JSON generator for integration with Liam ERD and other tbls-compatible tools (#471, #474)
+
+### Bug Fixes
+* Invalid generator option now falls back to mermaid (the documented default) instead of graphviz
+* Fix unparseable Mermaid output when `polymorphism` is enabled and an abstract parent has a tableless child (#459, #463)
+* Fix `only`/`exclude` not filtering relationships, so filtered-out models no longer leak back into Mermaid diagrams as phantom nodes (#472, #473)
+* Process models in a stable order so relationship order and source/destination direction are deterministic across runs, avoiding churn in generated diagrams committed to version control (#475, #476)
+
+### Internal
+* Restructure `filtered_attributes` for readability and add edge-case tests for `exclude_attributes` normalization (#458)
+* Fix README to show the correct command-line flag syntax for ERD generator options (#461)
+* Add a native Mermaid preview diagram to the README (#466)
+* Fix stale `LICENSE`/`CHANGES.rdoc` references in the YARD task and gemspec so the license and changelog are documented and packaged (#469)
+* Update LICENSE copyright year to 2026 (#468)
+
+2.0.2
+-----
+
+### Features
+* Add `exclude_attributes` option to hide attributes on a per-model basis (#421, #457)
+
+### Bug Fixes
+* Fix crash when using `exclude` option with polymorphic associations on Rails 8 (#454, #455, #456)
+
+2.0.1
+-----
+
+### Bug Fixes
+* Fix mermaid syntax errors for namespaced class names (#450, #451)
+* Fix test helper to correctly create namespaced models (#451)
+
+### Internal
+* Use temp directory for test output files (#453)
+
+2.0.0
+-----
+
+### Breaking Changes
+* Default generator changed from Graphviz to Mermaid (#448)
+* Default filetype changed from PDF to MMD (#448)
+* Default mermaid_style changed from classDiagram to erDiagram (#448)
+* Default direction changed from RL to TB (top-down) (#448)
+* ruby-graphviz gem is now optional (#448)
+
+### New Features
+* Mermaid erDiagram style with crow's foot notation and PK/FK markers (#445)
+* CLI now supports all options that rake task supports (#446, #447)
+* Mermaid direction respects orientation option (#448)
+
+### Bug Fixes
+* Fix --only flag with single model (#441)
+* Fix nil destination crash (#440)
+* Fix empty .erdconfig crash (#443)
+* Fix CLI string-to-symbol option conversion (#447)
+* Exclude Rails 8 Solid* internal models (#437, #438, #439)
+* Suppress Ruby 3.4 hash key warnings (#436)
+
+### Documentation
+* Updated README for Mermaid as default (#444, #448)
+* Added non-Rails usage example (#444)
+
+1.7.2
+-----
+* Suppress warnings for tableless Rails models (#390)
+* Fix example erdconfig foreign keys (docs) (#392)
+* Replace CI badge from Travis to GH Actions (#393)
+* Fix spelling error in error msg (#394)
+* Handle deprecated direct_descendants (#395)
+* Map foreign keys & current column name to symbols (#397)
+
+1.7.1
+-----
+* Fix for frozen string error (#382)
+* Updated graphviz docs for linux (#351)
+
+1.7.0
+-----
+* Added support for Rails 7.0 and Ruby 3.0 (#379)
+* Added optional configuration to set which fonts to use (#378)
+* Improvements to rake tasks (#333, #373)
+* Made loading environment.rb optional (#371)
+
+
+1.6.1
+-----
+* Added support for Rails 6.1 (#365)
+
+1.6.0
+-----
+* Dropping support for Ruby < 2.2 and Rails < 4.2 (#323)
+* Added early support for Rails 6.0 (#329)
+* Documentation updates (#268, #269, #276, #288, #295)
+* Removed restriction that allowed to exclude only models from a diagram (#279)
+* Added additional margins to cluster (#280)
+* Deprecate safe_level of ERB.new in Ruby 2.6 (#297)
+* Fixed only_recursion_depth option failure when used from rake erd task (#266, #324)
+* Allow extra config files to be listed via cli (#275, #326)
+* Fixed long-standing segfault issue by removing identifier from association_identity (#296, #327)
+* Fix for bug when parameter to only option is a single model (#300, #328)
+* Properly handle custom version classes. (#304, #325)
+* Fixed a warning from Ruby RE ambiguous arguments (#315)
+* Updated gem dependencies (#311, #313)
+
+1.5.2
+-----
+* Disable calls to `eager_load_namespaces` < Rails 5 (#263)
+
+1.5.1
+-----
+
+* Improved < Ruby 2.3 support (#239)
+* Squashed once and for all the horizontal vs vertical orientation bugs (#241)
+* Added option for specifying spline types (#242)
+* Added a check for Graphviz installation before building out object graph (#248)
+* Fixed a bug in auto-generation rake task (#252)
+* `--cluster` option will work more reliably now! (#253)
+* Because it is 2017, we added Rails 5 to our official test matrix (#254)
+* Fixed a bug in `--only` that prevented it from working reliably (#257)
+* Added eager loading across all namespaces in the app (#258)
+* Minor improvements to tests (#228)
+
+1.5.0
+-----
+* New option of 'clustering' by namespace (#205)
+* Support for 'only_models_include_depth' option (#219)
+* Added basic support for non-Rails apps (#208)
+* Avoid duplicate specializations when using STI with an abstract base class (#211)
+* Fixed Ruby 2.1 deprecation warnings (#209)
+* Fixes to tests (#210, #213)
+* Various documentation fixes (#203, #212)
+
+1.4.7
+-----
+* Fixed grouping of associations (#190)
+* Fixed issue with command line options (#198)
+* Fixed horizontally graph when vertical was wanted and viceversa (#183)
+
+1.4.6
+-----
+* Revert auto-generation of diagrams added in #176 (#191)
+* Fix some Ruby warnings (#187)
+* Rescue from TypeError when loading target app (#185)
+
+1.4.5
+-----
+
+* Fix bug in `auto generate diagram` (#176)
+* Protect against `nil` model names (#177, #178)
+
+1.4.4
+-----
+
+* Return nil if native_type is geography (#168)
+* Change tests to address flickering failures on Travis-CI
+
+1.4.3
+-----
+
+* Fix for bug where defaults were overriding configuration options (#166)
+
+1.4.2
+-----
+
+* Fix for issue with strings vs symbols in options (#157)
+* Fix for 'geometry' columns causing errors (#158)
+
+1.4.1
+-----
+
+* Improved travis-ci testing
+* Improved speed of Attribute#from_model (#145)
+* Fixed a long-standing bug in rake task (#149)
+* Fixed 'No entities found' error when using filter (#152)
+* Prevent deprecation warning by specifying test order (#153)
+* Updated CODE_OF_CONDUCT
+
+1.4.0
+-----
+
+* Drop support for spaces in filenames (#123)
+* Ensure that #generalized? could be used (#127)
+* Fixing typos in font config (#140)
+
+1.3.1
+-----
+
+* Check that models are not abstract (#47)
+* Added MIT license (#117)
+* Fixed an issue with :only and :exclude options (#122)
+* Added a :sort option to preserve original attribute order (#126)
+* Mark primary and unique keys as such in diagram (#129)
+
+1.3.0
+-----
+
+* Added support for Rails 4 (Issues #120, #115, #85, #89, and #68)
+
+1.2.2
+-----
+
+* Fixes a bug in sorting abstract classes (Issues #54, #88)
+
+1.2.1
+-----
+
+* Fixes a bug in OS detection for JRuby (and newer MRI Rubies, too)
+
+1.2.0
+-----
+
+* Fixed bug that prevented generation of diagrams on newer versions of OSX
+* Added ability to store CLI configuration options in a config file, both a global version (in the user's home directory) as well as a per-project local versions
+* Added a Code of Conduct for the project
+
+1.1.0
+-----
+
+* Abstract models (with 'self.abstract_class = true') are now considered for
+  the domain and will be displayed if 'polymorphism=true'. This should also
+  fix errors that could occur if abstract models had any associations.
+* Correctly save Graphviz diagrams with spaces in the filename (contributed by
+  Neil Chambers).
+* Add only/exclude to CLI (contributed by Dru Ibarra).
+
+
+1.0.0
+-----
+
+* The internal API is now stable and will be backwards compatible until
+  the next major version.
+* Added experimental command line interface (erd). The CLI still requires a
+  Rails application to be present, but it may one day support other kinds of
+  applications.
+* Crow's foot notation (also known as the Information Engineering notation)
+  can be used by adding 'notation=crowsfoot' to the 'rake erd' command
+  (contributed by Jeremy Holland).
+* Filter models by using the only or exclude options (only=ModelOne,ModelTwo
+  or exclude=ModelThree,ModelFour) from the command line (contributed by
+  Milovan Zogovic).
+* Process column types that are unsupported by Rails (contributed by Erik
+  Gustavson).
+* Ignore custom limit/scale attributes that cannot be converted to an integer
+  (reported by Adam St. John).
+
+0.4.5
+-----
+
+* Display more helpful error message when the application models could not be
+  loaded successfully by the 'rake erd' task (reported by Greg Weber).
+
+0.4.4
+-----
+
+* Added the ability to disable HTML markup in node labels (markup=false). This
+  causes .dot files to be compatible with OmniGraffle, which otherwise fails
+  to import graphs with HTML node labels (issue reported by Lucas Florio,
+  implementation based on template by Troy Anderson).
+* Prevent models named after Graphviz reserved words (Node, Edge) from causing
+  errors in .dot files (reported by gguthrie).
+* Improved error messages when Graphviz is throwing errors (reported by
+  Michael Irwin).
+
+0.4.3
+-----
+
+* Display the scale of decimal attributes when set. A decimal attribute with
+  precision 5 and scale 2 is now indicated with (5,2).
+* Fixed deprecation warnings for edge Rails (upcoming 3.1).
+
+0.4.1
+-----
+
+* Fix processing of associations with class_name set to absolute module paths.
+* Adjust model loading process to include models in non-standard paths eagerly.
+
+0.4.0
+-----
+
+* Support to optionally display single table inheritance relationships
+  (inheritance=true).
+* Support to optionally display polymorphic associations (polymorphism=true).
+* Adjustments to 'advanced' style so that it matches original Bachman style,
+  and therefore now called 'bachman'.
+* Ignore models without tables (reported by Mark Chapman).
+* Mutual indirect relationships are now combined.
+* Changed API for diagram generation.
+* Restructured classes and renamed several API properties and methods.
+* Added new edge type to describe single table inheritance and polymorphic
+  associations: Specialization.
+* Added compatibility for Active Record 3.1 (beta), removed dependency on Arel.
+* Rubinius compatibility.
+
+0.3.0
+-----
+
+* Added the ability to support multiple styles of cardinality notations.
+  Currently supported types are 'simple' and 'advanced'.
+* Added option to exclude indirect relationships (indirect=false).
+* Added option to change or disable the diagram title (title='Custom title').
+* Altered the type descriptions of attributes.
+* Renamed options for flexibility and clarity.
+* Improved internal logic to determine the cardinality of relationships.
+* More versatile API that allows you to inspect relationships and their
+  cardinalities.
+* Changed line widths to 1.0 to avoid invisible node boundaries with older
+  versions of Graphviz (reported by Mike McQuinn).
+* Bundled examples based on actual applications.
+
+0.2.0
+-----
+
+* Added simple way to create your own type of diagrams with a tiny amount of code.
+* Improved internal API and documentation.
+* Subtle changes in diagram style.
+* Fixed error where non-mutual relationships might be inadvertently classified
+  as indirect relationships.
+* Fixed error where diagrams with a vertical layout might fail to be generated.
+
+0.1.1
+-----
+
+* Fixed small errors in Ruby 1.8.7.
+* Abort generation of diagrams when there are no models.
+
+0.1.0
+-----
+
+* Released on September 20th, 2010.
+* First public release.

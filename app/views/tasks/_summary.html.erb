@@ -1,7 +1,24 @@
-<div id="task-summary" class="mb-3 flex items-baseline justify-between px-1">
-  <h2 class="m-0 text-[12px] font-semibold uppercase tracking-[0.08em] text-slate-500">รายการงาน</h2>
-  <div class="flex items-center gap-3 text-[12px] text-slate-500">
-    <span class="inline-flex items-center gap-1.5"><strong class="font-semibold text-slate-800"><%= tasks.count(&:completed?) %></strong> เสร็จแล้ว</span>
-    <span class="inline-flex items-center gap-1.5"><strong class="font-semibold text-slate-800"><%= tasks.count { |task| !task.completed? } %></strong> รอดำเนินการ</span>
+<div id="task-summary" class="task-summary mb-3 flex items-center justify-between px-1">
+  <h2 class="task-summary__title m-0 text-[12px] font-semibold uppercase tracking-[0.08em] text-slate-500">
+    <span class="task-summary__title-icon" aria-hidden="true">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8">
+        <path d="M6.5 5H16M6.5 10H16M6.5 15H16" stroke-linecap="round"/>
+        <path d="M3 5.1L3.6 5.7L4.8 4.3M3 10.1L3.6 10.7L4.8 9.3M3 15.1L3.6 15.7L4.8 14.3" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </span>
+    รายการงาน
+  </h2>
+
+  <div class="task-summary__stats">
+    <span class="task-summary__stat task-summary__stat--completed">
+      <i aria-hidden="true"></i>
+      <strong><%= tasks.count(&:completed?) %></strong>
+      <span>เสร็จแล้ว</span>
+    </span>
+    <span class="task-summary__stat task-summary__stat--pending">
+      <i aria-hidden="true"></i>
+      <strong><%= tasks.count { |task| !task.completed? } %></strong>
+      <span>รอดำเนินการ</span>
+    </span>
   </div>
 </div>
